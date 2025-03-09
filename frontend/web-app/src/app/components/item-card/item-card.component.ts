@@ -16,5 +16,6 @@ export class ItemCardComponent {
 
   openQuantityDialog() {
     console.log("QUANTITY CHANGED")
+  //   TODO QUANTITY LOGIC HERE, TODO CREATE POPUP FOR ADD QUANTITY FORM
   }
 }
