@@ -13,6 +13,6 @@ import {RouterLink} from '@angular/router';
 export class HomeViewComponent {
 
   ngOnInit() {
-    console.log("MAIN VIEW")
+    console.log("HOME VIEW")
   }
 }
