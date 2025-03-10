@@ -1,9 +1,10 @@
 .card {
-  background-color: #8fa8a2;
+  background-color: #f3cd94;
   border: 1px solid #ccc;
   padding: 10px;
   margin: 10px;
   border-radius: 8px;
+  color: #32446c;
 }
 
 .card img {
@@ -15,4 +16,24 @@
 .btn-primary {
   background-color: #32446c !important;
   border-color: #32446c !important;
+
+}
+.modal-content {
+  background-color: #f3cd94;
+}
+.modal-header {
+  color: #32446c;
+  border-color: #f3cd94;
+}
+.modal-footer {
+  border-color: #f3cd94;
+}
+button {
+  background-color: #32446c;
+  color: white;
+}
+.btn-close {
+  background-color: white;
+  color: #32446c;
+  opacity: 100%;
 }

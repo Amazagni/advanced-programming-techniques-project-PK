@@ -1,1 +1,28 @@
-<h1>TODO zrobic dodawanie itemow</h1>
+<div class="container mt-4">
+  <h2>Dodaj nowy przedmiot</h2>
+
+  <form [formGroup]="itemForm" (ngSubmit)="submitForm()">
+    <div class="mb-3">
+      <label for="name" class="form-label">Nazwa</label>
+      <input type="text" id="name" class="form-control" formControlName="name" required>
+    </div>
+
+    <div class="mb-3">
+      <label for="description" class="form-label">Opis</label>
+      <textarea id="description" class="form-control" formControlName="description" required></textarea>
+    </div>
+
+    <div class="mb-3">
+      <label for="quantity" class="form-label">Ilość</label>
+      <input type="number" id="quantity" class="form-control" formControlName="quantity" required min="1">
+    </div>
+
+
+    <div class="mb-3">
+      <label for="image" class="form-label">Obrazek</label>
+      <input type="file" id="image" class="form-control" (change)="onImageSelected($event)" required>
+    </div>
+
+    <button type="submit" class="btn btn-primary" [disabled]="itemForm.invalid">Dodaj</button>
+  </form>
+</div>
