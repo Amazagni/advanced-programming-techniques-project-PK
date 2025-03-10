@@ -1,5 +1,5 @@
 .card {
-  background-color: #dbdada;
+  background-color: #8fa8a2;
   border: 1px solid #ccc;
   padding: 10px;
   margin: 10px;
@@ -13,5 +13,6 @@
 }
 
 .btn-primary {
-  background-color: #1E3A8A !important;
+  background-color: #32446c !important;
+  border-color: #32446c !important;
 }
