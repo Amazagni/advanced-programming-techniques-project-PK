@@ -1,6 +1,7 @@
-import { Component } from '@angular/core';
+import {Component} from '@angular/core';
 import {FormBuilder, FormGroup, ReactiveFormsModule, Validators} from '@angular/forms';
 import {Item} from '../../models/item.model';
+import {HttpClient} from '@angular/common/http';
 
 @Component({
   selector: 'app-add-item-view',
@@ -13,22 +14,43 @@ export class AddItemViewComponent {
   itemForm: FormGroup;
   selectedImage: File | null = null;
 
-  constructor(private fb: FormBuilder) {
+  constructor(
+    private fb: FormBuilder,
+    private http: HttpClient,
+  ) {
     this.itemForm = this.fb.group({
       name: ['', Validators.required],
       description: ['', Validators.required],
       quantity: [1, [Validators.required, Validators.min(1)]],
-      imageUrl: ['', Validators.required]
+      image: ['', Validators.required]
     });
   }
 
   submitForm() {
     if (this.itemForm.valid && this.selectedImage) {
-      const newItem: Item = {
-        ...this.itemForm.value,
-        image: this.selectedImage.name
-      };
-      console.log('Nowy item:', newItem);
+      const formData = new FormData();
+      
+      formData.append('name', this.itemForm.get('name')!.value);
+      formData.append('description', this.itemForm.get('description')!.value);
+      formData.append('quantity', this.itemForm.get('quantity')!.value);
+      formData.append('image', this.selectedImage, this.selectedImage.name);
+
+      console.log('FormData contents:');
+      for (const [key, value] of (formData as any).entries()) {
+        console.log(`${key}: ${value}`);
+      }
+
+      this.http.post<Item>('http://localhost:50001/items/create', formData)
+        .subscribe({
+          next: (response) => {
+            console.log('Item added successfully:', response);
+          },
+          error: (error) => {
+            console.error('Error adding item:', error);
+          }
+        });
+    } else {
+      console.log('Form is invalid or no image selected.');
     }
   }
 
@@ -37,6 +59,7 @@ export class AddItemViewComponent {
     if (fileInput.files && fileInput.files.length > 0) {
       this.selectedImage = fileInput.files[0];
       console.log('Wybrany obrazek:', this.selectedImage);
+      this.itemForm.patchValue({ image: this.selectedImage.name });
     }
   }
 }
