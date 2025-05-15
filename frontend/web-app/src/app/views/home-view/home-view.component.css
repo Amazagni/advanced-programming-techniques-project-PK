@@ -1,0 +1,13 @@
+.btn-primary {
+  background-color: #32446c !important;
+  border-color: #32446c !important;
+}
+
+h1, h2, p {
+  color: #32446c;
+}
+
+.img-fluid {
+  border-radius: 10px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}

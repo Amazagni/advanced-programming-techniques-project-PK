@@ -1,0 +1,14 @@
+<div class="container mt-5">
+  <h2>Zaloguj się</h2>
+  <form (ngSubmit)="login()">
+    <div class="mb-3">
+      <label for="username" class="form-label">Login</label>
+      <input type="text" id="username" [(ngModel)]="username" name="username" class="form-control" required>
+    </div>
+    <div class="mb-3">
+      <label for="password" class="form-label">Hasło</label>
+      <input type="password" id="password" [(ngModel)]="password" name="password" class="form-control" required>
+    </div>
+    <button type="submit" class="btn btn-primary">Zaloguj </button>
+  </form>
+</div>

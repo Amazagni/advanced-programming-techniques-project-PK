@@ -1,0 +1,19 @@
+.container {
+  max-width: 500px;
+  background-color: #f3cd94;  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+  color: #32446c;
+}
+
+h2 {
+  font-weight: bold;
+  margin-bottom: 20px;
+}
+
+.btn-primary {
+  width: 100%;
+  opacity: 100%;
+  background-color: #32446c !important;
+  border-color: #32446c !important;
+}
