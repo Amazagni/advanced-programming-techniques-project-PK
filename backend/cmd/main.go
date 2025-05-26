@@ -6,12 +6,20 @@ import (
 	"log"
 	"net/http"
 
+	_ "backend/docs"
 	"github.com/gorilla/mux"
+	httpSwagger "github.com/swaggo/http-swagger"
 )
 
+// @title Items API
+// @version 1.0
+// @description API for managing items
+// @host localhost:50001
+// @BasePath /
 func main() {
 	logger.InitLogger()
 	r := mux.NewRouter()
+	r.PathPrefix("/swagger/").Handler(httpSwagger.WrapHandler)
 	r.HandleFunc("/items", handlers.Items).Methods("GET", "OPTIONS")
 	r.HandleFunc("/items/{id}", handlers.ItemByID).Methods("GET", "OPTIONS")
 	r.HandleFunc("/items/create", handlers.CreateItem).Methods("POST", "OPTIONS")
