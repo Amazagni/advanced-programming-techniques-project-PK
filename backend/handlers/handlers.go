@@ -1,6 +1,7 @@
 package handlers
 
 import (
+	_ "backend/docs"
 	"backend/logger"
 	"backend/models"
 	"encoding/json"
@@ -58,6 +59,14 @@ func paging(data []models.Item, limit, offset int) []models.Item {
 	return data[offset:end]
 }
 
+// Items godoc
+// @Summary Get all items
+// @Description Returns all available items
+// @Tags items
+// @Accept  json
+// @Produce  json
+// @Success 200 {array} models.Item
+// @Router /items [get]
 func Items(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Access-Control-Allow-Origin", "http://localhost:4200")
 	w.Header().Set("Access-Control-Allow-Methods", "GET, OPTIONS")
@@ -102,6 +111,16 @@ func Items(w http.ResponseWriter, r *http.Request) {
 	_, _ = w.Write(dataByte)
 }
 
+// ItemByID godoc
+// @Summary Get item by ID
+// @Description Returns a single item by ID
+// @Tags items
+// @Accept  json
+// @Produce  json
+// @Param id path int true "Item ID"
+// @Success 200 {object} models.Item
+// @Failure 404 {object} models.ErrorResponse
+// @Router /items/{id} [get]
 func ItemByID(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Access-Control-Allow-Origin", "http://localhost:4200")
 	w.Header().Set("Access-Control-Allow-Methods", "GET, OPTIONS")
@@ -127,6 +146,19 @@ func ItemByID(w http.ResponseWriter, r *http.Request) {
 	WriteError(w, "Item not found", 404)
 }
 
+// CreateItem godoc
+// @Summary Create a new item
+// @Description Creates a new item with form data
+// @Tags items
+// @Accept multipart/form-data
+// @Produce  json
+// @Param name formData string true "Item name"
+// @Param description formData string true "Item description"
+// @Param quantity formData int true "Item quantity"
+// @Param image formData file false "Item image"
+// @Success 201 {object} models.Item
+// @Failure 400 {object} models.ErrorResponse
+// @Router /items/create [post]
 func CreateItem(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Access-Control-Allow-Origin", "http://localhost:4200")
 	w.Header().Set("Access-Control-Allow-Methods", "POST, OPTIONS")
@@ -199,6 +231,18 @@ func CreateItem(w http.ResponseWriter, r *http.Request) {
 	// w.WriteHeader(200)
 }
 
+// UpdateItem godoc
+// @Summary Update item quantity
+// @Description Updates quantity of a specific item
+// @Tags items
+// @Accept  json
+// @Produce  json
+// @Param id path int true "Item ID"
+// @Param quantity body int true "New quantity"
+// @Success 200 {object} models.Item
+// @Failure 400 {object} models.ErrorResponse
+// @Failure 404 {object} models.ErrorResponse
+// @Router /items/update/{id} [put]
 func UpdateItem(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Access-Control-Allow-Origin", "http://localhost:4200")
 	w.Header().Set("Access-Control-Allow-Methods", "PUT, OPTIONS")
@@ -278,6 +322,16 @@ func UpdateItem(w http.ResponseWriter, r *http.Request) {
 	WriteError(w, "Can't update item", 404)
 }
 
+// DeleteItem godoc
+// @Summary Delete an item
+// @Description Deletes item by ID
+// @Tags items
+// @Accept  json
+// @Produce  json
+// @Param id path int true "Item ID"
+// @Success 204 "No Content"
+// @Failure 404 {object} models.ErrorResponse
+// @Router /items/delete/{id} [delete]
 func DeleteItem(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Access-Control-Allow-Origin", "http://localhost:4200")
 	w.Header().Set("Access-Control-Allow-Methods", "DELETE, OPTIONS")
