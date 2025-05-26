@@ -2,6 +2,8 @@ import {Component} from '@angular/core';
 import {FormBuilder, FormGroup, ReactiveFormsModule, Validators} from '@angular/forms';
 import {Item} from '../../models/item.model';
 import {HttpClient} from '@angular/common/http';
+import Swal from 'sweetalert2';
+
 
 @Component({
   selector: 'app-add-item-view',
@@ -29,7 +31,7 @@ export class AddItemViewComponent {
   submitForm() {
     if (this.itemForm.valid && this.selectedImage) {
       const formData = new FormData();
-      
+
       formData.append('name', this.itemForm.get('name')!.value);
       formData.append('description', this.itemForm.get('description')!.value);
       formData.append('quantity', this.itemForm.get('quantity')!.value);
@@ -44,9 +46,37 @@ export class AddItemViewComponent {
         .subscribe({
           next: (response) => {
             console.log('Item added successfully:', response);
+
+            this.itemForm.reset({
+              name: '',
+              description: '',
+              quantity: 1,
+              image: ''
+            });
+            this.selectedImage = null;
+
+            Swal.fire({
+              icon: 'success',
+              title: 'Sukces!',
+              text: 'Przedmiot został dodany poprawnie.',
+              confirmButtonText: 'OK',
+              background: '#f0f4f8',
+              color: '#32446c',
+              confirmButtonColor: '#32446c'
+            });
+
           },
           error: (error) => {
             console.error('Error adding item:', error);
+            Swal.fire({
+              icon: 'error',
+              title: 'Błąd!',
+              text: 'Wystąpił problem podczas dodawania przedmiotu.',
+              confirmButtonText: 'OK',
+              background: '#f0f4f8',
+              color: '#32446c',
+              confirmButtonColor: '#32446c'
+            });
           }
         });
     } else {

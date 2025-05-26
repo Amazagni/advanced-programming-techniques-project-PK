@@ -12,13 +12,20 @@
         <li class="nav-item">
           <a class="nav-link" routerLink="/">Strona Główna</a>
         </li>
-        <li class="nav-item">
+        <li class="nav-item" *ngIf="auth.isAuthenticated()">
           <a class="nav-link" routerLink="/inventory">Lista artykułów</a>
         </li>
-        <li class="nav-item">
+        <li class="nav-item" *ngIf="auth.isAdmin()">
           <a class="nav-link" routerLink="/add-item">Dodaj artykuł</a>
+        </li>
+        <li class="nav-item" *ngIf="auth.isAuthenticated()">
+          <a class="nav-link" href="#" (click)="auth.logout()">Wyloguj </a>
+        </li>
+        <li class="nav-item" *ngIf="!auth.isAuthenticated()">
+          <a class="nav-link" href="/login">Zaloguj </a>
         </li>
       </ul>
     </div>
   </div>
 </nav>
+
