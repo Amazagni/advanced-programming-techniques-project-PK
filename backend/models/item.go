@@ -1,11 +1,11 @@
 package models
 
 type Item struct {
-	Id          int32
-	Name        string
-	Description string
-	Quantity    int32
-	ImageURL    string
+	Id          int32  `json:"Id"`
+	Name        string `json:"Name"`
+	Description string `json:"Description"`
+	Quantity    int32  `json:"Quantity"`
+	ImageURL    string `json:"ImageURL"`
 }
 
 type ErrorResponse struct {
