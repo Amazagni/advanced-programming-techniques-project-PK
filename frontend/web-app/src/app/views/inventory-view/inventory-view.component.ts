@@ -3,7 +3,7 @@ import {ItemCardComponent} from '../../components/item-card/item-card.component'
 import {NgForOf, AsyncPipe, NgIf} from '@angular/common';
 import {Item} from '../../models/item.model';
 import {HttpClient} from '@angular/common/http';
-import {map, Observable} from 'rxjs';
+import {map, Observable, forkJoin, switchMap} from 'rxjs';
 
 @Component({
   selector: 'app-inventory-view',
@@ -20,9 +20,28 @@ import {map, Observable} from 'rxjs';
 export class InventoryViewComponent{
   inventory$: Observable<Item[]>;
 
+  // constructor(private http: HttpClient) {
+  //   console.log("dupa")
+  //   this.inventory$ = this.http.get<Item[]>(
+  //     'http://localhost:50001/items?limit=10&offset=0'
+  //   );
+  // }
+
   constructor(private http: HttpClient) {
     this.inventory$ = this.http.get<Item[]>(
       'http://localhost:50001/items?limit=10&offset=0'
+    ).pipe(
+      switchMap((items: Item[]) => {
+        const enrichedItems$ = items.map(item =>
+          this.http.get(`http://localhost:50001/image?filename=${item.ImageURL}`, { responseType: 'text' }).pipe(
+            map((base64Image: string) => ({
+              ...item,
+              ImageURL: base64Image
+            }))
+          )
+        );
+        return forkJoin(enrichedItems$);
+      })
     );
   }
 

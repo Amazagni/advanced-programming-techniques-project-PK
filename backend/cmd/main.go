@@ -20,6 +20,7 @@ func main() {
 	logger.InitLogger()
 	r := mux.NewRouter()
 	r.PathPrefix("/swagger/").Handler(httpSwagger.WrapHandler)
+	r.HandleFunc("/image", handlers.ServeImage).Methods("GET", "OPTIONS")
 	r.HandleFunc("/items", handlers.Items).Methods("GET", "OPTIONS")
 	r.HandleFunc("/items/{id}", handlers.ItemByID).Methods("GET", "OPTIONS")
 	r.HandleFunc("/items/create", handlers.CreateItem).Methods("POST", "OPTIONS")

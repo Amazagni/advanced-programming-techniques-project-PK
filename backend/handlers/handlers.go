@@ -4,9 +4,13 @@ import (
 	_ "backend/docs"
 	"backend/logger"
 	"backend/models"
+	"encoding/base64"
 	"encoding/json"
+	"fmt"
 	"io"
 	"net/http"
+	"os"
+	"path/filepath"
 	"slices"
 	"strconv"
 
@@ -28,7 +32,8 @@ var (
 			Description: "Idk how it got here",
 			Quantity:    1,
 			ImageURL:    "assets/images/placeholder.jpg",
-		}}
+		},
+	}
 )
 
 func WriteError(w http.ResponseWriter, message string, statusCode int) {
@@ -68,6 +73,7 @@ func paging(data []models.Item, limit, offset int) []models.Item {
 // @Success 200 {array} models.Item
 // @Router /items [get]
 func Items(w http.ResponseWriter, r *http.Request) {
+	logger.Info("Items hit")
 	w.Header().Set("Access-Control-Allow-Origin", "http://localhost:4200")
 	w.Header().Set("Access-Control-Allow-Methods", "GET, OPTIONS")
 	w.Header().Set("Access-Control-Allow-Headers", "Content-Type")
@@ -107,8 +113,40 @@ func Items(w http.ResponseWriter, r *http.Request) {
 	}
 	dataLimited := paging(Data, limit, offset)
 
+	for i := range len(dataLimited) {
+		logger.Info(dataLimited[i].ImageURL)
+	}
+
 	dataByte, _ := json.Marshal(dataLimited)
 	_, _ = w.Write(dataByte)
+}
+
+func ServeImage(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Access-Control-Allow-Origin", "http://localhost:4200")
+	w.Header().Set("Access-Control-Allow-Methods", "GET, OPTIONS")
+	w.Header().Set("Access-Control-Allow-Headers", "Content-Type")
+	filename := r.URL.Query().Get("filename")
+	safeFilename := filepath.Base(filename)
+	imagePath := filepath.Join("assets/images", safeFilename)
+	file, err := os.Open(imagePath)
+	if err != nil {
+		WriteError(w, "Image not found", http.StatusNotFound)
+		return
+	}
+	defer file.Close()
+
+	imageBytes, err := io.ReadAll(file)
+	if err != nil {
+		WriteError(w, "Failed to read image", http.StatusInternalServerError)
+		return
+	}
+
+	contentType := http.DetectContentType(imageBytes)
+	base64Image := base64.StdEncoding.EncodeToString(imageBytes)
+	data := fmt.Sprintf("data:%s;base64,%s", contentType, base64Image)
+
+	w.Header().Set("Content-Type", "text/plain")
+	w.Write([]byte(data))
 }
 
 // ItemByID godoc
@@ -188,47 +226,47 @@ func CreateItem(w http.ResponseWriter, r *http.Request) {
 	}
 
 	file, header, err := r.FormFile("image")
-	if err != nil && err != http.ErrMissingFile {
-		logger.Error("Error retrieving image file")
-		WriteError(w, "Error retrieving image file", http.StatusBadRequest)
-		return
-	}
 	var imageURL string
-	if file != nil {
+
+	if err == nil {
 		defer file.Close()
-		// Save the image (you'll need to implement your own logic here)
-		imageURL = header.Filename // Or generate a unique filename
+
+		imageDir := "./assets/images"
+		if err := os.MkdirAll(imageDir, os.ModePerm); err != nil {
+			WriteError(w, "Unable to create image directory", http.StatusInternalServerError)
+			return
+		}
+
+		filename := filepath.Base(header.Filename)
+		savePath := filepath.Join(imageDir, filename)
+
+		out, err := os.Create(savePath)
+		if err != nil {
+			WriteError(w, "Failed to save image", http.StatusInternalServerError)
+			return
+		}
+		defer out.Close()
+		if _, err := io.Copy(out, file); err != nil {
+			WriteError(w, "Failed to write image", http.StatusInternalServerError)
+			return
+		}
+
+		imageURL = "assets/images/" + filename
 	}
 
+	id := int32(len(Data) + 1)
 	newItem := models.Item{
+		Id:          id,
 		Name:        name,
 		Description: description,
 		Quantity:    int32(quantity),
 		ImageURL:    imageURL,
 	}
-
 	Data = append(Data, newItem)
+
 	w.WriteHeader(http.StatusCreated)
 	dataByte, _ := json.Marshal(newItem)
 	_, _ = w.Write(dataByte)
-
-	// body, err := io.ReadAll(r.Body)
-	// if err != nil {
-	// 	logger.Error("Error reading request body")
-	// 	WriteError(w, "Error reading request body", http.StatusBadRequest)
-	// 	return
-	// }
-
-	// item := models.Item{}
-	// err = json.Unmarshal(body, &item)
-	// logger.Info("Received request body: " + string(body)) // Log the raw body
-	// if err != nil {
-	// 	logger.Error("Can't create item")
-	// 	WriteError(w, "Can't create Item. Error: "+err.Error(), 400)
-	// }
-
-	// Data = append(Data, item)
-	// w.WriteHeader(200)
 }
 
 // UpdateItem godoc
