@@ -4,7 +4,7 @@ A full-stack inventory management application with a Go backend and a modern Jav
 
 ## 🚀 Getting Started
 
-### Backend
+### 🛠️ Backend
 
 #### Prerequisites
 
@@ -17,7 +17,7 @@ cd backend
 go run cmd/main.go
 ```
 
-### Frontend
+### 🎨 Frontend
 
 #### Prerequisites
 
@@ -30,6 +30,24 @@ go run cmd/main.go
 cd frontend\web-app
 npm install
 npm run dev
+```
+
+### 🐳 Docker
+
+#### Prerequisites
+
+- Docker engine
+
+#### Start services
+
+```bash
+docker-compose up --build
+```
+
+#### Shut down:
+
+```bash
+docker-compose down
 ```
 
 ---
