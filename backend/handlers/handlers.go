@@ -73,15 +73,9 @@ func paging(data []models.Item, limit, offset int) []models.Item {
 // @Success 200 {array} models.Item
 // @Router /items [get]
 func Items(w http.ResponseWriter, r *http.Request) {
-	logger.Info("Items hit")
 	w.Header().Set("Access-Control-Allow-Origin", "http://localhost:4200")
 	w.Header().Set("Access-Control-Allow-Methods", "GET, OPTIONS")
 	w.Header().Set("Access-Control-Allow-Headers", "Content-Type")
-
-	if r.Method == "OPTIONS" {
-		w.WriteHeader(http.StatusOK)
-		return
-	}
 
 	query := r.URL.Query()
 	limitStr := query.Get("limit")
@@ -113,10 +107,6 @@ func Items(w http.ResponseWriter, r *http.Request) {
 	}
 	dataLimited := paging(Data, limit, offset)
 
-	for i := range len(dataLimited) {
-		logger.Info(dataLimited[i].ImageURL)
-	}
-
 	dataByte, _ := json.Marshal(dataLimited)
 	_, _ = w.Write(dataByte)
 }
@@ -125,6 +115,10 @@ func ServeImage(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Access-Control-Allow-Origin", "http://localhost:4200")
 	w.Header().Set("Access-Control-Allow-Methods", "GET, OPTIONS")
 	w.Header().Set("Access-Control-Allow-Headers", "Content-Type")
+	if r.Method == "OPTIONS" {
+		w.WriteHeader(http.StatusOK)
+		return
+	}
 	filename := r.URL.Query().Get("filename")
 	safeFilename := filepath.Base(filename)
 	imagePath := filepath.Join("assets/images", safeFilename)
@@ -342,21 +336,6 @@ func UpdateItem(w http.ResponseWriter, r *http.Request) {
 		}
 	}
 
-	// requestItem := models.Item{}
-	// body, err := io.ReadAll(r.Body)
-	// err = json.Unmarshal(body, &requestItem)
-	// if err != nil {
-	// 	logger.Error("Can't update item")
-	// 	WriteError(w, "Can't update item", 404)
-	// }
-
-	// for idx, item := range Data {
-	// 	if item.Id == id {
-	// 		Data[idx] = requestItem
-	// 		w.WriteHeader(200)
-	// 		return
-	// 	}
-	// }
 	WriteError(w, "Can't update item", 404)
 }
 
